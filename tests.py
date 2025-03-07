@@ -18,3 +18,31 @@ class TestBooksCollector:
 
         # словарь books_rating, который нам возвращает метод get_books_rating, имеет длину 2
         assert len(collector.get_books_rating()) == 2
+
+class TestBooksCollectorNew:
+    @pytest.fixture()
+    def collector(self):
+        return BooksCollector()
+
+    @pytest.mark.parametrize(
+        "book_name, expected",
+        [("Война миров", True), ("Слияние", True), ("", False), ("A" * 41, False)],
+    )
+    def test_add_new_book(self, collector, book_name, expected):
+        collector.add_new_book(book_name)
+        assert(book_name in collector.get_books_genre()) == expected
+
+    @pytest.mark.parametrize(
+        "book_name, genre, expected_genre",
+        [
+        ("Война миров", "Фантастика", "Фантастика"),
+        ("Сияние", "Ужасы", "Ужасы"),
+        ("Война миров", "Неизвестный жанр", ""),
+        ("Такой книги нет", "Фонтастика", None),
+        ],
+    )
+    def test_set_book_genre(self, collector, book_name, genre, expected_genre):
+        collector.add_new_book("Война миров")
+        collector.add_new_book("Сияние")
+        collector.set_book_genre(book_name, genre)
+        assert collector.get_book_genre(book_name) == expected_genre
